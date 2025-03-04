@@ -1,6 +1,6 @@
 // Migration file for task management system
 exports.up = function (knex) {
-  return knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"').then(() => {
+  return (
     knex.schema
 
       // Create users table
@@ -162,8 +162,8 @@ exports.up = function (knex) {
 
         // Add an index for performance on comment threads
         table.index("reply_to_comment_id");
-      });
-  });
+      })
+  );
 };
 
 exports.down = function (knex) {

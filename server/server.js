@@ -1,7 +1,9 @@
 const app = require("./server-config.js");
-const routes = require("./server-routes.js");
+const userRoutes = require("./src/users/user.routes");
 
 const port = process.env.PORT || 3000;
+
+app.use("/users", userRoutes);
 
 // app.get("/", routes.getAllTodos);
 // app.get("/:id", routes.getTodo);
