@@ -3,6 +3,7 @@ const BaseModel = require("./base.model");
 
 const User = {
   ...BaseModel,
+  createUser: (userData) => db("users").insert(userData).returning("*"),
   getByEmail: (email) => db("users").where("email", email).first(),
   getByUsername: (username) => db("users").where("username", username).first(),
   getOrganizationMemberships: (userId) =>
