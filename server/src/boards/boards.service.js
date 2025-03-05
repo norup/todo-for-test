@@ -14,8 +14,13 @@ const getBoards = async (filters = {}) => {
     isActive,
   } = filters;
 
-  if (!organizationId) {
-    throw new Error("Organization ID is required");
+  if (!organizationId && !userId) {
+    return handleError(
+      res,
+      "Organization ID or User ID is required",
+      null,
+      400
+    );
   }
 
   let query = Board.getAll()
@@ -89,11 +94,28 @@ const getBoardById = async (boardId) => {
   };
 };
 
-const createBoard = async (boardData) => {
-  if (!boardData) {
-    throw new Error("Board data is required");
+const createBoard = async ({ name, description, token }) => {
+  try {
+    const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const board = await Board.createBoard({
+      name,
+      description,
+      created_by: user.id,
+      organization_id: user.organization_id,
+    });
+
+    return board;
+  } catch (error) {
+    console.error("Error creating board", error);
+    throw new Error("Failed to create board");
   }
-  return Board.create(boardData);
 };
 
 const updateBoard = async (boardId, boardData) => {

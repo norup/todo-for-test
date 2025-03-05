@@ -6,8 +6,11 @@ const handleError = (res, message, error, status = 500) => {
 
 const getBoards = async (req, res) => {
   try {
-    const boards = await boardService.getBoards(req.query);
-    res.json(boards);
+    const filters = req.params;
+
+    const boards = await boardService.getBoards(filters);
+
+    res.status(200).json(boards);
   } catch (error) {
     handleError(res, "Error fetching boards", error);
   }
@@ -35,7 +38,21 @@ const getBoardById = async (req, res) => {
 
 const createBoard = async (req, res) => {
   try {
-    const board = await boardService.createBoard(req.body);
+    const { name, description } = req.body;
+
+    if (!name || !description) {
+      return handleError(
+        res,
+        "Invalid board data",
+        {
+          message: "Name and description are required",
+        },
+        400
+      );
+    }
+    const token = req.cookies.token;
+
+    const board = await boardService.createBoard({ name, description, token });
     res.status(201).json(board);
   } catch (error) {
     handleError(res, "Error creating board", error);

@@ -3,6 +3,7 @@ const BaseModel = require("./base.model");
 
 const Board = {
   ...BaseModel,
+  createBoard: (boardData) => db("boards").insert(boardData),
   getStages: (boardId) =>
     db("board_stages")
       .where("board_id", boardId)
